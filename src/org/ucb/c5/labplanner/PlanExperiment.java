@@ -43,15 +43,18 @@ public class PlanExperiment {
 
     private List<List<Step>> groupSimilarSteps(Experiment expt, Inventory inventory) throws Exception {
         // TODO PlanExperiment Main Logic Part 1
+        return null;
     }
 
     private List<List<Step>> cleanGroupedSteps(List<List<Step>> groupedSteps, Experiment expt, Inventory inventory)
             throws Exception {
         // TODO PlanExperiment Main Logic Part 2
+        return null;
     }
 
     private LabPacket createAndBundleLabSheets(List<List<Step>> cleanedSteps, Inventory inventory) throws Exception {
         // TODO PlanExperiment Main Logic Part 3
+        return null;
     }
     
     public static void main(String[] args) throws Exception {
