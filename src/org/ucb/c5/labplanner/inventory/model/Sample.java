@@ -62,4 +62,8 @@ public class Sample {
     public String getClone() {
         return clone;
     }
+
+    public Sample getCopy() {
+        return new Sample(this.label, this.sidelabel, this.concentration, this.construct, this.culture, this.clone);
+    }
 }

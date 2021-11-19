@@ -1,8 +1,7 @@
 package org.ucb.c5.labplanner.inventory.model;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import org.ucb.c5.labplanner.inventory.model.Sample.Concentration;
 import org.ucb.c5.labplanner.inventory.model.Sample.Culture;
 
@@ -14,7 +13,6 @@ import org.ucb.c5.labplanner.inventory.model.Sample.Culture;
  */
 public class Inventory {
     private final List<Box> boxes;  //all the boxes in the inventory
-
     private final Map<String, Set<Location>> constructToLocations;   //Quick lookup of samples by construct name
     private final Map<Location, Concentration> locToConc;   //Quick lookup by Concentration
     private final Map<Location, String> locToClone;   //Quick lookup by Clone
@@ -48,5 +46,32 @@ public class Inventory {
         return locToCulture;
     }
 
+    public Inventory getCopy() {
+        List<Box> boxesCopy = new ArrayList<>();
+        Map<String, Set<Location>> constructToLocationsCopy = new HashMap<>();
+        Map<Location, Concentration> locToConcCopy = new HashMap<>();
+        Map<Location, String> locToCloneCopy = new HashMap<>();
+        Map<Location, Culture> locToCultureCopy = new HashMap<>();
 
+        for (int i = 0; i < this.boxes.size(); i++) {
+            boxesCopy.add(this.boxes.get(i).getCopy());
+        }
+        for (String key : this.constructToLocations.keySet()) {
+            Set locationSetCopy = new HashSet();
+            for (Location location : this.constructToLocations.get(key)) {
+                locationSetCopy.add(location.getCopy());
+            }
+            constructToLocationsCopy.put(key, locationSetCopy);
+        }
+        for (Location location : this.locToConc.keySet()) {
+            locToConcCopy.put(location.getCopy(), this.locToConc.get(location));
+        }
+        for (Location location : this.locToClone.keySet()) {
+            locToCloneCopy.put(location.getCopy(), this.locToClone.get(location));
+        }
+        for (Location location : this.locToCulture.keySet()) {
+            locToCultureCopy.put(location.getCopy(), this.locToCulture.get(location));
+        }
+        return new Inventory(boxesCopy, constructToLocationsCopy, locToConcCopy, locToCloneCopy, locToCultureCopy);
+    }
 }

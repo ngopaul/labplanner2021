@@ -39,4 +39,8 @@ public class Location {
     public String getSidelabel() {
         return sidelabel;
     }
+
+    public Location getCopy() {
+        return new Location(this.boxname, this.row, this.col, this.label, this.sidelabel);
+    }
 }

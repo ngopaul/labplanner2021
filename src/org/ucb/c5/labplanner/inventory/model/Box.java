@@ -32,4 +32,14 @@ public class Box {
     public Sample[][] getSamples() {
         return samples;
     }
+
+    public Box getCopy() {
+        Sample[][] samplesCopy = new Sample[this.samples.length][this.samples[0].length];
+        for (int i = 0; i < this.samples.length; i++) {
+            for (int j = 0; j < this.samples[0].length; j++) {
+                samplesCopy[i][j] = this.samples[i][j].getCopy();
+            }
+        }
+        return new Box(this.name, this.description, this.location, samplesCopy);
+    }
 }
