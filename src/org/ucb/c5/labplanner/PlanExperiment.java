@@ -34,7 +34,26 @@ public class PlanExperiment {
     }
 
     public LabPacket run(Experiment expt, Inventory inventory) throws Exception {
-        //TODO: write me
+        // TODO: write me
+        Order_Map = new HashMap<>(); // ensure repeatability
+
+        // Group together similar Steps into List<Step>
+        List<List<Step>> groupedSteps = groupSimilarSteps(expt, inventory);
+
+        // Inject gel and zymo cleanup labsheets for each PCR
+        // Inject zymo cleanup labsheets for digests
+        // TODO verify correct function signature
+        List<List<Step>> cleanedSteps = cleanGroupedSteps(groupedSteps, expt, inventory);
+
+        //Relay List<Step> and Inventory to create LabSheets via separate Functions
+        //Bundle up the LabSheets and modified Boxes in LabPacket, return it
+        LabPacket labPacket = createAndBundleLabSheets(cleanedSteps, inventory);
+
+        return labPacket;
+    }
+
+    private List<List<Step>> groupSimilarSteps(Experiment expt, Inventory inventory) throws Exception {
+        // TODO PlanExperiment Main Logic Part 1
         List<ConstructionFile> list_constructs;
         List<Step> list_steps;
         list_constructs = expt.getCfs();
@@ -61,15 +80,17 @@ public class PlanExperiment {
             }
         }
         /* RESULT: ArrayList of List<Step> which should be in order of the ordering array */
+        return Prioritized;
+    }
 
+    private List<List<Step>> cleanGroupedSteps(List<List<Step>> groupedSteps, Experiment expt, Inventory inventory)
+            throws Exception {
+        // TODO PlanExperiment Main Logic Part 2
+        return null;
+    }
 
-
-        //Group together similar Steps into List<Step>
-        //Inject gel and zymo cleanup labsheets for each PCR
-        //Inject zymo cleanup labsheets for digests
-        //Relay List<Step> and Inventory to create LabSheets via separate Functions
-        //Bundle up the LabSheets and modified Boxes in LabPacket, return it
-
+    private LabPacket createAndBundleLabSheets(List<List<Step>> cleanedSteps, Inventory inventory) throws Exception {
+        // TODO PlanExperiment Main Logic Part 3
         return null;
     }
 
