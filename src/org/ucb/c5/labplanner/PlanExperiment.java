@@ -7,11 +7,11 @@ import org.ucb.c5.constructionfile.model.Operation;
 import org.ucb.c5.constructionfile.model.Step;
 import org.ucb.c5.labplanner.inventory.ParseInventory;
 import org.ucb.c5.labplanner.inventory.model.Inventory;
+import org.ucb.c5.labplanner.inventory.model.Location;
+import org.ucb.c5.labplanner.labpacket.LabSheetFactory;
 import org.ucb.c5.labplanner.labpacket.model.LabPacket;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List; //Added by Patrick
+import java.util.*;
 
 import static org.ucb.c5.constructionfile.model.Operation.*; //Added by Patrick
 
@@ -86,6 +86,30 @@ public class PlanExperiment {
     private List<List<Step>> cleanGroupedSteps(List<List<Step>> groupedSteps, Experiment expt, Inventory inventory)
             throws Exception {
         // TODO PlanExperiment Main Logic Part 2
+        //Obtain steps for PCR, Digest
+        List<Step> pcrSteps = groupedSteps.get(2);
+        List<Step> digestSteps = groupedSteps.get(3);
+
+        //Initiate LabSheetFactory
+        LabSheetFactory labSheetFactory = new LabSheetFactory();
+        labSheetFactory.initiate();
+
+        // Inject gel and zymo cleanup labsheets for each PCR
+        // Inject zymo cleanup labsheets for digests
+        Map<String, Set<Location>> getLocations = inventory.getConstructToLocations();
+        List<ConstructionFile> list_constructs;
+        list_constructs = expt.getCfs();
+        for (ConstructionFile construct : list_constructs) {
+            String name = construct.getPdtName();
+            if(getLocations.containsKey(name)) {
+                getLocations.get(name);
+            }
+        }
+
+        labSheetFactory.run(pcrSteps, );
+        labSheetFactory.run(digestSteps, );
+
+
         return null;
     }
 
