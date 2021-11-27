@@ -5,6 +5,9 @@ import org.ucb.c5.labplanner.inventory.model.Location;
 import org.ucb.c5.labplanner.labpacket.model.LabSheet;
 import org.ucb.c5.labplanner.labpacket.model.Recipe;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class LabSheetFactory {
@@ -28,9 +31,16 @@ public class LabSheetFactory {
 //        private final List<String> notes;  //Any notes to display as alerts
 //        private final Recipe reaction;  //Ingredients for setting up the reaction
 
-        String title = "Dummy title";
+        String title = "Dummy Title";
+        // steps already passed in
+        List<Location> sources = new ArrayList<>();
+        List<Location> destinations = new ArrayList<>();
+        String program = "dummy program";
+        String protocol = "dummy protocol";
+        String instrument = "dummy instrument";
+        List<String> notes = new ArrayList<>(Arrays.asList("Dummy Note"));
+        Recipe reaction = new Recipe(new HashMap<>(), new HashMap<>());
 
-
-        return null;
+        return new LabSheet(title, steps, sources, destinations, program, protocol, instrument, notes, reaction);
     }
 }
