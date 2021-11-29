@@ -30,10 +30,27 @@ public class AddSampleToBox {
      */
     public Box run(Sample sample, Box box, int row, int col) throws Exception {
         //TODO:  write me
-        return null;
+        if (box.getSamples()[row][col] != null) {
+            throw new Exception("Location is not empty");
+        }
+        Sample[][] sample_copy = box.getSamples();
+        sample_copy[row][col] = sample;
+        Box boxcopy = new Box(box.getName(), box.getDescription(), box.getLocation(), sample_copy);
+        return boxcopy;
     }
     
     public static void main(String[] args) {
         //TODO: Create an example showing usage of run
+        Sample testSample1 = new Sample("testLabel1", "testSideLabel1", gene, "testConstruct1", Sample.Culture.primary, "testClone1");
+        Sample testSample2 = new Sample("testLabel2", "testSideLabel2", zymo, "testConstruct2", Sample.Culture.secondary, "testClone2");
+
+        Sample[][] samples = new Sample[9][9];
+        Box emptyBox = new Box("testBox1", "Test empty box", "testLoc1", samples);
+        AddSampleToBox adder = new AddSampleToBox();
+        Box testBox = adder.run(testSample1, emptyBox, 1, 4);
+        assert(testBox.getSamples()[0][0]!=null);
+
+        Box testBox2 = adder.run(testSample2, testBox, 2, 6);
+        assert(testBox2.getSamples()[9][9]!=null);
     }
 }
