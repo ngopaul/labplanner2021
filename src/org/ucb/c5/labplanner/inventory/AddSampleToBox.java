@@ -9,6 +9,9 @@ package org.ucb.c5.labplanner.inventory;
 import org.ucb.c5.labplanner.inventory.model.Box;
 import org.ucb.c5.labplanner.inventory.model.Sample;
 
+import static org.ucb.c5.labplanner.inventory.model.Sample.Concentration.gene;
+import static org.ucb.c5.labplanner.inventory.model.Sample.Concentration.zymo;
+
 /**
  * Adds a sample to a box.  In the process, it checks that the position in the
  * Box is a valid position and unoccupied.  Since the inventory is immutable,
@@ -29,17 +32,15 @@ public class AddSampleToBox {
      * @throws Exception 
      */
     public Box run(Sample sample, Box box, int row, int col) throws Exception {
-        //TODO:  write me
-        if (box.getSamples()[row][col] != null) {
+        Box boxCopy = box.getCopy();
+        if (boxCopy.getSamples()[row][col] != null) {
             throw new Exception("Location is not empty");
         }
-        Sample[][] sample_copy = box.getSamples();
-        sample_copy[row][col] = sample;
-        Box boxcopy = new Box(box.getName(), box.getDescription(), box.getLocation(), sample_copy);
-        return boxcopy;
+        boxCopy.getSamples()[row][col] = sample;
+        return boxCopy;
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         //TODO: Create an example showing usage of run
         Sample testSample1 = new Sample("testLabel1", "testSideLabel1", gene, "testConstruct1", Sample.Culture.primary, "testClone1");
         Sample testSample2 = new Sample("testLabel2", "testSideLabel2", zymo, "testConstruct2", Sample.Culture.secondary, "testClone2");

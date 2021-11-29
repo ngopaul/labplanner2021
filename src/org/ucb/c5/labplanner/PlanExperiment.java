@@ -10,6 +10,7 @@ import org.ucb.c5.labplanner.inventory.model.Inventory;
 import org.ucb.c5.labplanner.inventory.model.Location;
 import org.ucb.c5.labplanner.labpacket.LabSheetFactory;
 import org.ucb.c5.labplanner.labpacket.model.LabPacket;
+import org.ucb.c5.labplanner.labpacket.model.LabSheet;
 
 import java.util.*;
 
@@ -43,11 +44,11 @@ public class PlanExperiment {
         // Inject gel and zymo cleanup labsheets for each PCR
         // Inject zymo cleanup labsheets for digests
         // TODO verify correct function signature
-        List<List<Step>> cleanedSteps = cleanGroupedSteps(groupedSteps, expt, inventory);
+        List<LabSheet> allSheets = cleanGroupedSteps(groupedSteps, expt, inventory);
 
         //Relay List<Step> and Inventory to create LabSheets via separate Functions
         //Bundle up the LabSheets and modified Boxes in LabPacket, return it
-        LabPacket labPacket = createAndBundleLabSheets(cleanedSteps, inventory);
+        LabPacket labPacket = bundleLabSheets(allSheets, inventory);
 
         return labPacket;
     }
@@ -83,7 +84,7 @@ public class PlanExperiment {
         return Prioritized;
     }
 
-    private List<List<Step>> cleanGroupedSteps(List<List<Step>> groupedSteps, Experiment expt, Inventory inventory)
+    private List<LabSheet> cleanGroupedSteps(List<List<Step>> groupedSteps, Experiment expt, Inventory inventory)
             throws Exception {
         // TODO PlanExperiment Main Logic Part 2
         //Obtain steps for PCR, Digest
@@ -106,15 +107,18 @@ public class PlanExperiment {
             }
         }
 
-        labSheetFactory.run(pcrSteps, );
-        labSheetFactory.run(digestSteps, );
+        // TODO make a list of modified locations. Sources is of type List<Location> which are sources.
+        //  Destinations is type List<Location> which are destinations.
 
+        labSheetFactory.run(pcrSteps, sources, destinations);
+        labSheetFactory.run(digestSteps, sources, destinations);
 
         return null;
     }
 
-    private LabPacket createAndBundleLabSheets(List<List<Step>> cleanedSteps, Inventory inventory) throws Exception {
+    private LabPacket bundleLabSheets(List<LabSheet> allSheets, Inventory inventory) throws Exception {
         // TODO PlanExperiment Main Logic Part 3
+        // bundle the
         return null;
     }
 

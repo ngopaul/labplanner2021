@@ -19,7 +19,7 @@ public class LabSheetFactory {
         // TODO
     }
 
-    public LabSheet run(List<Step> steps, List<Location> locations) {
+    public LabSheet run(List<Step> steps, List<Location> sources, List<Location> destinations) {
         // TODO
 //        private final String title;    //What is displayed at the top of the LabSheet
 //        private final List<Step> steps;  //ConstructionFile Steps executed on this sheet
@@ -33,8 +33,8 @@ public class LabSheetFactory {
 
         String title = "Dummy Title";
         // steps already passed in
-        List<Location> sources = new ArrayList<>();
-        List<Location> destinations = new ArrayList<>();
+        // sources passed in
+        // destinations passed in
         String program = "dummy program";
         String protocol = "dummy protocol";
         String instrument = "dummy instrument";
