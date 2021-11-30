@@ -5,7 +5,9 @@ import org.ucb.c5.constructionfile.model.ConstructionFile;
 import org.ucb.c5.constructionfile.model.Experiment;
 import org.ucb.c5.constructionfile.model.Operation;
 import org.ucb.c5.constructionfile.model.Step;
+import org.ucb.c5.labplanner.inventory.AddSampleToBox;
 import org.ucb.c5.labplanner.inventory.ParseInventory;
+import org.ucb.c5.labplanner.inventory.model.Box;
 import org.ucb.c5.labplanner.inventory.model.Inventory;
 import org.ucb.c5.labplanner.inventory.model.Location;
 import org.ucb.c5.labplanner.labpacket.LabSheetFactory;
@@ -26,12 +28,14 @@ import static org.ucb.c5.constructionfile.model.Operation.*; //Added by Patrick
  */
 public class PlanExperiment {
     private HashMap<Operation, List<Step>> Order_Map;
+    private AddSampleToBox addSampleToBox;
 
     public void initiate()  throws Exception {
         //TODO: write me, or delete comment if not needed
         Order_Map = new HashMap<>();
 
-
+        addSampleToBox = new AddSampleToBox();
+        addSampleToBox.initiate();
     }
 
     public LabPacket run(Experiment expt, Inventory inventory) throws Exception {
@@ -43,12 +47,13 @@ public class PlanExperiment {
 
         // Inject gel and zymo cleanup labsheets for each PCR
         // Inject zymo cleanup labsheets for digests
-        // TODO verify correct function signature
-        List<LabSheet> allSheets = cleanGroupedSteps(groupedSteps, expt, inventory);
+        // NOTE modify the inventory
+        Inventory modifiedInventory = inventory.getCopy();
+        List<LabSheet> allSheets = applyChangesToInventoryAndAddCleanSheets(groupedSteps, expt, modifiedInventory);
 
         //Relay List<Step> and Inventory to create LabSheets via separate Functions
         //Bundle up the LabSheets and modified Boxes in LabPacket, return it
-        LabPacket labPacket = bundleLabSheets(allSheets, inventory);
+        LabPacket labPacket = bundleLabSheets(allSheets, inventory, modifiedInventory);
 
         return labPacket;
     }
@@ -84,10 +89,16 @@ public class PlanExperiment {
         return Prioritized;
     }
 
-    private List<LabSheet> cleanGroupedSteps(List<List<Step>> groupedSteps, Experiment expt, Inventory inventory)
+    private List<LabSheet> applyChangesToInventoryAndAddCleanSheets(List<List<Step>> groupedSteps, Experiment expt, Inventory inventory)
             throws Exception {
         // TODO PlanExperiment Main Logic Part 2
-        //Obtain steps for PCR, Digest
+        //  - collect a list of sources and destinations for each group of Steps
+        //  - Apply these changes to the inventory
+        //  - run labSheetFactory on each group, then add the output to the final list of LabSheets
+        //  - for each group, also add a cleanup LabSheet to the final list of LabSheets
+        //  - if the cleanup modifies the inventory, do so
+
+        // Obtain steps for PCR, Digest
         List<Step> pcrSteps = groupedSteps.get(2);
         List<Step> digestSteps = groupedSteps.get(3);
 
@@ -116,10 +127,20 @@ public class PlanExperiment {
         return null;
     }
 
-    private LabPacket bundleLabSheets(List<LabSheet> allSheets, Inventory inventory) throws Exception {
+    private LabPacket bundleLabSheets(List<LabSheet> allSheets,
+                                      Inventory originalInventory,
+                                      Inventory modifiedInventory) throws Exception {
         // TODO PlanExperiment Main Logic Part 3
-        // bundle the
-        return null;
+
+        List<Box> modifiedBoxes = new ArrayList<>();
+        // compare inventories for differing boxes
+        for (int i = 0; i < originalInventory.getBoxes().size(); i++) {
+            if (!originalInventory.getBoxes().get(i).equals(modifiedInventory.getBoxes().get(i))) {
+                modifiedBoxes.add(modifiedInventory.getBoxes().get(i));
+            }
+        }
+
+        return new LabPacket(allSheets, modifiedBoxes);
     }
 
     public static void main(String[] args) throws Exception {
