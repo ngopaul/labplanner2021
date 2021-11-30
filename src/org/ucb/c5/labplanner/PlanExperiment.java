@@ -14,6 +14,7 @@ import org.ucb.c5.labplanner.labpacket.LabSheetFactory;
 import org.ucb.c5.labplanner.labpacket.model.LabPacket;
 import org.ucb.c5.labplanner.labpacket.model.LabSheet;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import static org.ucb.c5.constructionfile.model.Operation.*; //Added by Patrick
@@ -98,33 +99,98 @@ public class PlanExperiment {
         //  - for each group, also add a cleanup LabSheet to the final list of LabSheets
         //  - if the cleanup modifies the inventory, do so
 
-        // Obtain steps for PCR, Digest
-        List<Step> pcrSteps = groupedSteps.get(2);
-        List<Step> digestSteps = groupedSteps.get(3);
+        ArrayList<LabSheet> gatheredLabSheets = new ArrayList<LabSheet>();
 
         //Initiate LabSheetFactory
         LabSheetFactory labSheetFactory = new LabSheetFactory();
         labSheetFactory.initiate();
 
-        // Inject gel and zymo cleanup labsheets for each PCR
-        // Inject zymo cleanup labsheets for digests
+        //Initiate AddSampleToBox
+        AddSampleToBox addSampleToBox = new AddSampleToBox();
+
         Map<String, Set<Location>> getLocations = inventory.getConstructToLocations();
-        List<ConstructionFile> list_constructs;
-        list_constructs = expt.getCfs();
-        for (ConstructionFile construct : list_constructs) {
-            String name = construct.getPdtName();
-            if(getLocations.containsKey(name)) {
-                getLocations.get(name);
+
+        for (List<Step> groupOfSteps : groupedSteps) {
+            ArrayList<Location> sources = new ArrayList<Location>();
+            ArrayList<Location> destinations = new ArrayList<Location>();
+
+            //Collect locations for sources and destinations list
+            for (Step singleStep : groupOfSteps) {
+                String sample = singleStep.getProduct();
+                Set<Location> locations = getLocations.get(sample);
+                ArrayList<Location> modifiedLocations = new ArrayList<>(locations);
+                Location selectedLocation = modifiedLocations.get(0);
+                Operation operation = singleStep.getOperation();
+                if (operation.toString().equals("acquire")) {
+                    destinations.add(selectedLocation);
+                } else {
+                    sources.add(selectedLocation);
+                }
+                //Apply these changes to Inventory?? - 1). AddSampleToBox, 2). Add to maps in Inventory
+                //1). AddSampleToBox Modification
+                List<Box> listBoxes = inventory.getBoxes();
+                String boxName = selectedLocation.getBoxname();
+                Box locatedBox = null;
+                for (Box box : listBoxes) {
+                    if (box.getName().equals(boxName)) {
+                        locatedBox = box;
+                    }
+                }
+                //Look for Sample Object with 'sample' name
+                addSampleToBox.run(sample, locatedBox, selectedLocation.getRow(), selectedLocation.getCol()); //ISSUE W/ THIS
+
+                //2). Add (K,V) to maps in Inventory; last 3 maps rely on getting the Sample object from previous step
+
             }
+
+
+
+            //Run labSheetFactory on each group of steps and add output to gatheredLabSheets
+            LabSheet resultingLabSheet = labSheetFactory.run(groupOfSteps, sources, destinations);
+            gatheredLabSheets.add(resultingLabSheet);
+
+            //Add a cleanup LabSheet to the final list of LabSheets; ask tomorrow in class about this
+            gatheredLabSheets.add(cleanUpLabSheet);
+
+
         }
 
-        // TODO make a list of modified locations. Sources is of type List<Location> which are sources.
-        //  Destinations is type List<Location> which are destinations.
 
-        labSheetFactory.run(pcrSteps, sources, destinations);
-        labSheetFactory.run(digestSteps, sources, destinations);
 
-        return null;
+
+
+
+
+//        /// OLD
+//
+//        // Obtain steps for PCR, Digest
+//        List<Step> pcrSteps = groupedSteps.get(2);
+//        List<Step> digestSteps = groupedSteps.get(3);
+//
+//        //Initiate LabSheetFactory
+//        LabSheetFactory labSheetFactory = new LabSheetFactory();
+//        labSheetFactory.initiate();
+//
+//        // Inject gel and zymo cleanup labsheets for each PCR
+//        // Inject zymo cleanup labsheets for digests
+//        Map<String, Set<Location>> getLocations = inventory.getConstructToLocations();
+//        List<ConstructionFile> list_constructs;
+//        list_constructs = expt.getCfs();
+//        ArrayList<Location> listLocations = new ArrayList<Location>();
+//        for (ConstructionFile construct : list_constructs) {
+//            String name = construct.getPdtName();
+//            if(getLocations.containsKey(name)) {
+//                listLocations.add(getLocations.get(name));
+//            }
+//        }
+//
+//        // TODO make a list of modified locations. Sources is of type List<Location> which are sources.
+//        //  Destinations is type List<Location> which are destinations.
+//
+//        labSheetFactory.run(pcrSteps, sources, destinations);
+//        labSheetFactory.run(digestSteps, sources, destinations);
+
+        return gatheredLabSheets;
     }
 
     private LabPacket bundleLabSheets(List<LabSheet> allSheets,
