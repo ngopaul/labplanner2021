@@ -80,7 +80,7 @@ public class PlanExperiment {
         }
 
         //Priority Rearranging
-        Operation[] ordering = new Operation[]{acquire, pca, pcr, digest, ligate, assemble, transform, blunting}; //order of step groups
+        Operation[] ordering = new Operation[]{pca, pcr, digest, ligate, assemble, transform, blunting}; //order of step groups
         ArrayList<List<Step>> Prioritized = new ArrayList<>();
         for (int i = 0; i < 8; i++){
             if(Order_Map.containsKey(ordering[i])){
