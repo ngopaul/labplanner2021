@@ -12,7 +12,7 @@ import org.ucb.c5.labplanner.inventory.model.Sample.Culture;
  * @author J. Christopher Anderson
  */
 public class Inventory {
-    private final List<Box> boxes;  //all the boxes in the inventory
+    private final List<Box> boxes;  // all the boxes in the inventory
     private final Map<String, Set<Location>> constructToLocations;   //Quick lookup of samples by construct name
     private final Map<Location, Concentration> locToConc;   //Quick lookup by Concentration
     private final Map<Location, String> locToClone;   //Quick lookup by Clone
