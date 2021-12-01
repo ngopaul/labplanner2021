@@ -7,6 +7,7 @@ import org.ucb.c5.labplanner.inventory.ParseInventory;
 import org.ucb.c5.labplanner.inventory.model.Box;
 import org.ucb.c5.labplanner.inventory.model.Inventory;
 import org.ucb.c5.labplanner.inventory.model.Location;
+import org.ucb.c5.labplanner.inventory.model.Sample;
 import org.ucb.c5.labplanner.labpacket.LabSheetFactory;
 import org.ucb.c5.labplanner.labpacket.model.LabPacket;
 import org.ucb.c5.labplanner.labpacket.model.LabSheet;
@@ -223,24 +224,40 @@ public class PlanExperiment {
         AddSampleToBox addSampleToBox = new AddSampleToBox();
 
         Map<String, Set<Location>> getLocations = inventory.getConstructToLocations();
+        Map<String, Sample.Concentration> mapToConcentration = new HashMap<>();
+        mapToConcentration.put("pca", Sample.Concentration.uM10);
+        mapToConcentration.put("pcr", Sample.Concentration.uM10);
+        mapToConcentration.put("digest", Sample.Concentration.zymo);
+        mapToConcentration.put("ligate", Sample.Concentration.zymo);
+        mapToConcentration.put("assemble", Sample.Concentration.zymo);
+        mapToConcentration.put("transform", Sample.Concentration.miniprep);
+        mapToConcentration.put("blunting", Sample.Concentration.zymo);
 
         for (List<Step> groupOfSteps : groupedSteps) {
             ArrayList<Location> sources = new ArrayList<Location>();
             ArrayList<Location> destinations = new ArrayList<Location>();
 
-            //Collect locations for sources and destinations list
+            //Collect locations for sources and destinations list; sources = samples to retrieve from Box, destinations = samples to add to Box
             for (Step singleStep : groupOfSteps) {
                 String sample = singleStep.getProduct();
                 Set<Location> locations = getLocations.get(sample);
                 ArrayList<Location> modifiedLocations = new ArrayList<>(locations);
                 Location selectedLocation = modifiedLocations.get(0);
                 Operation operation = singleStep.getOperation();
-                if (operation.toString().equals("acquire")) {
-                    destinations.add(selectedLocation);
-                } else {
-                    sources.add(selectedLocation);
+                //Check if sample already exists in Inventory
+                List<String> reagents = Step.getReagents();
+                for (String r : reagents) {
+                    if (getLocations.containsKey(r)) {
+                        sources.add(selectedLocation);
+                    } else {
+                        throw new java.lang.Error("Reagent is not in Inventory!");
+
+
+                    }
+
                 }
                 //Apply these changes to Inventory?? - 1). AddSampleToBox, 2). Add to maps in Inventory
+                destinations.add(selectedLocation);
                 //1). AddSampleToBox Modification
                 List<Box> listBoxes = inventory.getBoxes();
                 String boxName = selectedLocation.getBoxname();
@@ -251,12 +268,51 @@ public class PlanExperiment {
                     }
                 }
                 //Look for Sample Object with 'sample' name
-                addSampleToBox.run(sample, locatedBox, selectedLocation.getRow(), selectedLocation.getCol()); //ISSUE W/ THIS
+                //TODO GET CORRECT CLONE
+                Sample sampleObject = new Sample(sample, "",  mapToConcentration.get(sample), sample, Sample.Culture.primary, "Clone");
+                addSampleToBox.run(sampleObject, locatedBox, selectedLocation.getRow(), selectedLocation.getCol());
+                //2). Add to maps in Inventory
+                int row = 0;
+                int col = 0;
+                boolean found = false;
+                Location newLocation = null;
+                for (Box box : listBoxes) {
+                    Sample[][] sampleWell = box.getSamples();
+                    for (int i = 0; i < sampleWell.length; i++) { //i = row
+                        for (int j = 0; j < sampleWell[0].length; j++) { //j = col
+                            if (sampleWell[i][j] == null) {
+                                row = i;
+                                col = j;
+                                newLocation = new Location(box.getName(), row, col, "", "");
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found) {
+                            break;
+                        }
+                    }
+                    if (found) {
+                        break;
+                    }
+                }
 
-                //2). Add (K,V) to maps in Inventory; last 3 maps rely on getting the Sample object from previous step
+                if (inventory.getConstructToLocations().containsKey(sample)) {
+                    Set<Location> obtainLocations = inventory.getConstructToLocations().get(sample);
+                    obtainLocations.add(newLocation);
+                } else {
+                    Set<Location> set = new HashSet<>();
+                    set.add(newLocation);
+                    inventory.getConstructToLocations().put(sample, set);
+                }
+                inventory.getLocToConc().put(newLocation, mapToConcentration.get(sample));
+                inventory.getLocToCulture().put(newLocation, Sample.Culture.primary);
+                //TODO GET CORRECT CLONE
+                inventory.getLocToClone().put(newLocation, "Clone");
+                
+
 
             }
-
 
 
             //Run labSheetFactory on each group of steps and add output to gatheredLabSheets
@@ -264,9 +320,8 @@ public class PlanExperiment {
             gatheredLabSheets.add(resultingLabSheet);
 
             //Add a cleanup LabSheet to the final list of LabSheets; ask tomorrow in class about this
+            LabSheet cleanUpLabSheet = new LabSheet("Cleanup LabSheet", null, null, null, null, null, null, null, null);
             gatheredLabSheets.add(cleanUpLabSheet);
-
-
         }
 
 
