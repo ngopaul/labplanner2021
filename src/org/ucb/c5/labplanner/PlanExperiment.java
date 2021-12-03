@@ -25,6 +25,8 @@ import java.util.*;
 public class PlanExperiment {
     private HashMap<Operation, List<Step>> Order_Map;
     private AddSampleToBox addSampleToBox;
+    private boolean cleansheetPCR = false;
+    private boolean cleansheetDigest = false;
 
     /**
      * A class which implements more useful functions than Step, including making an easily accessible
@@ -52,10 +54,12 @@ public class PlanExperiment {
                     reagents.addAll(((PCR) step).getTemplates());
                     reagents.add(((PCR) step).getOligo1());
                     reagents.add(((PCR) step).getOligo2());
+                    cleansheetPCR = true;
                     break;
                 case digest:
                     // requires.addAll(((Digestion) step).getEnzymes());
                     reagents.add(((Digestion) step).getSubstrate());
+                    cleansheetDigest = true;
                     break;
                 case ligate:
                     reagents.addAll(((Ligation) step).getFragments());
@@ -225,7 +229,7 @@ public class PlanExperiment {
 
         Map<String, Set<Location>> getLocations = inventory.getConstructToLocations();
         Map<String, Sample.Concentration> mapToConcentration = new HashMap<>();
-        mapToConcentration.put("pca", Sample.Concentration.uM10);
+        //mapToConcentration.put("pca", Sample.Concentration.uM10);
         mapToConcentration.put("pcr", Sample.Concentration.uM10);
         mapToConcentration.put("digest", Sample.Concentration.zymo);
         mapToConcentration.put("ligate", Sample.Concentration.zymo);
@@ -245,7 +249,7 @@ public class PlanExperiment {
                 Location selectedLocation = modifiedLocations.get(0);
                 Operation operation = singleStep.getOperation();
                 //Check if sample already exists in Inventory
-                List<String> reagents = Step.getReagents();
+                List<String> reagents = HelperStep.getReagents();
                 for (String r : reagents) {
                     if (getLocations.containsKey(r)) {
                         sources.add(selectedLocation);
@@ -319,9 +323,18 @@ public class PlanExperiment {
             LabSheet resultingLabSheet = labSheetFactory.run(groupOfSteps, sources, destinations);
             gatheredLabSheets.add(resultingLabSheet);
 
-            //Add a cleanup LabSheet to the final list of LabSheets; ask tomorrow in class about this
-            LabSheet cleanUpLabSheet = new LabSheet("Cleanup LabSheet", null, null, null, null, null, null, null, null);
-            gatheredLabSheets.add(cleanUpLabSheet);
+            //Add a cleanup LabSheet to the final list of LabSheets; checks if steps have pcr or digest and adds to end.
+            if (cleansheetPCR){
+                LabSheet cleanUpLabSheet = new LabSheet("Cleanup LabSheet PCR", null, null, null, null, null, null, null, null);
+                gatheredLabSheets.add(cleanUpLabSheet);
+                cleansheetPCR = false;
+            }
+            if (cleansheetDigest){
+                LabSheet cleanUpLabSheet = new LabSheet("Cleanup LabSheet Digest", null, null, null, null, null, null, null, null);
+                gatheredLabSheets.add(cleanUpLabSheet);
+                cleansheetDigest = false;
+            }
+
         }
 
 
