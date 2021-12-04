@@ -130,7 +130,8 @@ public class PlanExperiment {
         return labPacket;
     }
 
-    private List<List<HelperStep>> groupSimilarSteps(Experiment expt, Inventory inventory) throws Exception {
+    //Temporarily turned into public to test
+    public List<List<HelperStep>> groupSimilarSteps(Experiment expt, Inventory inventory) throws Exception {
         // TODO PlanExperiment Main Logic Part 1
         List<ConstructionFile> list_of_construction_files;
         list_of_construction_files = expt.getCfs();
