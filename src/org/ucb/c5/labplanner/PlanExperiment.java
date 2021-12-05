@@ -238,7 +238,7 @@ public class PlanExperiment {
         mapToConcentration.put("transform", Sample.Concentration.miniprep);
         mapToConcentration.put("blunting", Sample.Concentration.zymo);
 
-        for (List<Step> groupOfSteps : groupedSteps) {
+        for (List<HelperStep> groupOfSteps : groupedSteps) {
             ArrayList<Location> sources = new ArrayList<Location>();
             ArrayList<Location> destinations = new ArrayList<Location>();
 
