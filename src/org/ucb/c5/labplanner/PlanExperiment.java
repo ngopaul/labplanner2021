@@ -43,6 +43,7 @@ public class PlanExperiment {
         public HelperStep(Step step) {
             this.step = step;
             Operation operation = step.getOperation();
+            reagents = new ArrayList<>();
             switch (operation) {
                 case acquire:
                     throw new IllegalArgumentException("operation cannot be acquire");

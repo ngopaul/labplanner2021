@@ -64,6 +64,8 @@ public class Test_Overall {
         steps2.add(new Transformation("lig3", "DH10B", Antibiotic.Spec, pdtName2));
         ConstructionFile constf2 = new ConstructionFile(steps2, "pdt2", (Map)null);
         cfs_list.add(constf2);
+        
+        // Collections.shuffle(cfs_list);
 
         Experiment randomExp = new Experiment("Experiment", cfs_list, null);
         List<List<PlanExperiment.HelperStep>> result = new ArrayList<>();
@@ -74,9 +76,11 @@ public class Test_Overall {
             e.printStackTrace();
         }
         for (List<PlanExperiment.HelperStep> list: result){
+            System.out.println("====");
             for(PlanExperiment.HelperStep stepper : list){
-                System.out.println(stepper.getOperation() + " | " + stepper.reagents );
+                System.out.println(stepper.getOperation() + " | " + stepper.reagents + " > " + stepper.getProduct());
             }
+            System.out.println("====");
         }
 
         /*
@@ -177,9 +181,11 @@ public class Test_Overall {
             e.printStackTrace();
         }
         for (List<PlanExperiment.HelperStep> list: result){
+            System.out.println("====");
             for(PlanExperiment.HelperStep stepper : list){
-                System.out.println(stepper.getOperation() + " | " + stepper.reagents );
+                System.out.println(stepper.getOperation() + " | " + stepper.reagents + " > " + stepper.getProduct());
             }
+            System.out.println("====");
         }
 
     }
