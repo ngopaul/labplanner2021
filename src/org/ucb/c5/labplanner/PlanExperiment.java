@@ -243,13 +243,13 @@ public class PlanExperiment {
             ArrayList<Location> destinations = new ArrayList<Location>();
 
             //Collect locations for sources and destinations list; sources = samples to retrieve from Box, destinations = samples to add to Box
-            for (Step singleStep : groupOfSteps) {
+            for (HelperStep singleStep : groupOfSteps) {
                 String sample = singleStep.getProduct();
                 Set<Location> locations = getLocations.get(sample);
                 ArrayList<Location> modifiedLocations = new ArrayList<>(locations);
                 Location selectedLocation = modifiedLocations.get(0);
                 //Check if sample already exists in Inventory
-                List<String> reagents = HelperStep.getReagents();
+                List<String> reagents = singleStep.getReagents();
                 for (String r : reagents) {
                     if (getLocations.containsKey(r)) {
                         sources.add(selectedLocation);
@@ -311,9 +311,10 @@ public class PlanExperiment {
 
             }
 
+            List<Step> standardGroupOfSteps = groupOfSteps.stream().map(x -> x.getStep()).toList();
 
             //Run labSheetFactory on each group of steps and add output to gatheredLabSheets
-            LabSheet resultingLabSheet = labSheetFactory.run(groupOfSteps, sources, destinations);
+            LabSheet resultingLabSheet = labSheetFactory.run(standardGroupOfSteps, sources, destinations);
             gatheredLabSheets.add(resultingLabSheet);
 
             //Add a cleanup LabSheet to the final list of LabSheets; checks if steps have pcr or digest and adds to end.
