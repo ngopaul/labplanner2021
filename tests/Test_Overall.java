@@ -14,7 +14,7 @@ import java.util.*;
 
 public class Test_Overall {
     @Test
-    public void testGroupStep_simple3(){
+    public void testGroupStep_simple3() throws Exception {
         PlanExperiment test_groupstep = new PlanExperiment();
         test_groupstep.initiate();
 
@@ -117,7 +117,7 @@ public class Test_Overall {
     }
 
     @Test
-    public void testGroupStep_moredisordered(){
+    public void testGroupStep_moredisordered() throws Exception {
         PlanExperiment test_groupstep = new PlanExperiment();
         test_groupstep.initiate();
 
@@ -182,6 +182,6 @@ public class Test_Overall {
             }
         }
 
-
+    }
 }
 
