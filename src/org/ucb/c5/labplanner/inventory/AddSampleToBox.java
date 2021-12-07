@@ -49,9 +49,9 @@ public class AddSampleToBox {
         Box emptyBox = new Box("testBox1", "Test empty box", "testLoc1", samples);
         AddSampleToBox adder = new AddSampleToBox();
         Box testBox = adder.run(testSample1, emptyBox, 1, 4);
-        assert(testBox.getSamples()[0][0]!=null);
+        assert(testBox.getSamples()[1][4]!=null);
 
         Box testBox2 = adder.run(testSample2, testBox, 2, 6);
-        assert(testBox2.getSamples()[9][9]!=null);
+        assert(testBox2.getSamples()[2][6]!=null);
     }
 }
