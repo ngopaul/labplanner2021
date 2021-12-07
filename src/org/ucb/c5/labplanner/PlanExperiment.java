@@ -23,7 +23,6 @@ import java.util.*;
  * @author J. Christopher Anderson
  */
 public class PlanExperiment {
-    private HashMap<Operation, List<Step>> Order_Map;
     private AddSampleToBox addSampleToBox;
     private boolean cleansheetPCR = false;
     private boolean cleansheetDigest = false;
@@ -103,16 +102,11 @@ public class PlanExperiment {
     }
 
     public void initiate()  throws Exception {
-        //TODO: write me, or delete comment if not needed
-        Order_Map = new HashMap<>();
-
         addSampleToBox = new AddSampleToBox();
         addSampleToBox.initiate();
     }
 
     public LabPacket run(Experiment expt, Inventory inventory) throws Exception {
-        // TODO: write me
-        Order_Map = new HashMap<>(); // ensure repeatability
 
         // Group together similar Steps into List<Step>
         List<List<HelperStep>> groupedSteps = groupSimilarSteps(expt, inventory);
@@ -162,23 +156,29 @@ public class PlanExperiment {
         // Repeat this process until no steps move.
         boolean didStepsMove = true;
 
+        Set<String> previous_outputs = new HashSet<>();
+        Set<String> current_inputs = new HashSet<>();
+
         while (didStepsMove) {
             didStepsMove = false;
             for (int i = 0; i < groupedSteps.size(); i++) {
                 List<HelperStep> currentStepGroup = groupedSteps.get(i);
                 int leftmostIndexToMoveTo = i;
                 for (int j = i - 1; j >= 0; j--) {
-                    Set<String> previous_outputs = new HashSet<>();
+                    previous_outputs.clear();
+                    current_inputs.clear();
+
                     List<HelperStep> previousStepGroup = groupedSteps.get(j);
                     for (HelperStep previousStep : previousStepGroup) {
                         previous_outputs.add(previousStep.getProduct());
                         if (previousStep.getExtraProduct() != null)
                             previous_outputs.add(previousStep.getExtraProduct());
                     }
-                    Set<String> current_inputs = new HashSet<>();
+                    
                     for (HelperStep currentStep : currentStepGroup) {
                         current_inputs.addAll(currentStep.getReagents());
                     }
+
                     previous_outputs.retainAll(current_inputs);
                     if (previous_outputs.size() > 0) {
                         // the current stepgroup requires the previous step group
