@@ -1,0 +1,20 @@
+// Replace the p15A origin in pLYC25 with the pUC/pMB1 origin from p20N87
+pcr kback1-F,kback1-R on pLYC25             (3867 bp, Kback1)
+pcr kback2-F,kback2-R on pLYC25             (4843 bp, Kback2)
+pcr kpMB1-F,kpMB1-R on p20N87           (471 bp, frag1)
+assemble Kback1,Kback2,frag1              (BsaI, pLYC31K)
+Transform pLYC31K                          (Mach1, Amp)
+------------------------------------------
+>kback1-F       Forward BsaI. Split pLYC25 template into back1, ligation region aggc 5'
+agtcaGGTCTCcaggcttgggaagctgtggtatg
+>kback1-R       Reverse BsaI for pLYC25 template
+tggtgGGTCTCctaggcaccaataactgcct
+>kback2-F       Forward BsaI. Split pLYC25 template into back2, ligation region ccac
+agatgGGTCTCgccacgtatcgccagatgttc
+>kback2-R       Reverse BsaI for pLYC25 template
+agacaGGTCTCagcctccgacctacaggcgactgatcctg
+>kpMB1-F       Forward BsaI for pUC/pMB1 origin. Added ccta for 5' ligation region
+atgctGGTCTCtcctagtaactggcttcagcagagcg
+>kpMB1-R       Reverse BsaI for pUC/pMB1 origin, sequence gtgg is the ligation region
+agctaGGTCTCtgtgggacgctcaagtcagaggtgg
+

@@ -1,0 +1,20 @@
+// Replace the p15A origin in pLYC25 with the p20N189-A refactored pMB1+rop origin from plasmid pBR322 
+pcr kback1-F,kback1-R on pLYC25             (3867 bp, back1)
+pcr kback2-F,kback2-R on pLYC25             (4843 bp, back2)
+pcr k189-F,k189-R on p20N189-A  (1266 bp, frag3)
+assemble back1,back2,frag3              (BsaI, pLYC33K)
+Transform pLYC33K                          (Mach1, Amp)
+------------------------------------------
+>kback1-F       Forward BsaI. Split pLYC25 template into back1, ligation region aggc 5'
+agtcaGGTCTCcaggcttgggaagctgtggtatg
+>kback1-R       Reverse BsaI for pLYC25 template
+tggtgGGTCTCctaggcaccaataactgcct
+>kback2-F       Forward BsaI. Split pLYC25 template into back2, ligation region ccac
+agatgGGTCTCgccacgtatcgccagatgttc
+>kback2-R       Reverse BsaI for pLYC25 template
+agacaGGTCTCagcctccgacctacaggcgactgatcctg
+>k189-F    Forward BsaI for rop/pMB1 origin. Added ccta for 5' ligation region
+aatgcGGTCTCacctactatggaactgcctcggtgag
+>k189-R    Reverse BsaI for rop/pMB1 origin, sequence gtgg is the ligation region
+gcctaGGTCTCtgtggcagacattgcaggcttcctc
+

@@ -37,7 +37,12 @@ public class Box {
         Sample[][] samplesCopy = new Sample[this.samples.length][this.samples[0].length];
         for (int i = 0; i < this.samples.length; i++) {
             for (int j = 0; j < this.samples[0].length; j++) {
-                samplesCopy[i][j] = this.samples[i][j].getCopy();
+                Sample currentSample = this.samples[i][j];
+                if (currentSample == null) {
+                    samplesCopy[i][j] = null;
+                } else {
+                    samplesCopy[i][j] = currentSample.getCopy();
+                }
             }
         }
         return new Box(this.name, this.description, this.location, samplesCopy);

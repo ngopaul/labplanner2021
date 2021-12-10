@@ -1,0 +1,7 @@
+pcr EB1F,EB1R on pLYC25 (4831 bp, Eback1) 
+pcr EB2F,EB2R on pLYC25 (3890 bp, Eback2) 
+pcr EPF2,EPR2 on p20N189-A (1040 bp, Eori2) 
+assemble Eback1,Eback2,Eori2 (BsaI, pLYC33E)
+transform pLYC33E (Mach1, Amp) --------------------------------
+EB1F	agtcaGGTCTCataatGCCACGTATCGCCAGATGTT	Forward BsaI for pLYC25 templateEB1R	ccagtggtctcAgactgatcctgcgtgaacgtcatg	Reverse backbone oligo for Lycopene6EB2F	ccataggtctcAagtcgcctgtaggtcggcaggctt	Forward backbone oligo for Lycopene6EB2R	tggtgGGTCTCtcgagctaggcaccaataactgcc	Reverse BsaI for pLYC25 template
+EPF2	atgctGGTCTCactcgCTGAACTCtttacaaatcta	Forward BsaI for refactored pMB1+rop origin of P20N189-AEPR2	agctaGGTCTCgattagaagatcctttttgataatc	Reverse BsaI for refactored pMB1+rop origin of P20N189-A
