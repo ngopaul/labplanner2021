@@ -272,7 +272,20 @@ public class PlanExperiment {
                                 if (box.getSamples()[i][j] == null) {
                                     found_spot = true;
                                     box.getSamples()[i][j] = sample;
+
                                     locationToPlace = new Location(box.getName(), i, j, productName, "");
+
+                                    if (inventory.getConstructToLocations().containsKey(productName)) {
+                                        Set<Location> obtainLocations = inventory.getConstructToLocations().get(productName);
+                                        obtainLocations.add(locationToPlace);
+                                    } else {
+                                        Set<Location> set = new HashSet<>();
+                                        set.add(locationToPlace);
+                                        inventory.getConstructToLocations().put(productName, set);
+                                    }
+                                    inventory.getLocToConc().put(locationToPlace, mapToConcentration.get(productName));
+                                    inventory.getLocToCulture().put(locationToPlace, Sample.Culture.primary);
+                                    inventory.getLocToClone().put(locationToPlace, "Clone");
                                 }
                             }
                         }
